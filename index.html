@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="LapTimer" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="トラック競技（800m/1500m/5000m）用ラップ計測PWAアプリ" />
+  <title>Lap Timer</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ヘッダーエリア（Undo左上 / 保存右上） -->
+  <header class="app-header">
+    <button id="btn-undo" class="btn-aux btn-undo" aria-label="Undo" disabled>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 14 4 9l5-5"/>
+        <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>
+      </svg>
+      <span class="btn-aux-label">Undo</span>
+    </button>
+
+    <button id="btn-save" class="btn-aux btn-save" aria-label="画像保存" disabled>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span class="btn-aux-label">保存</span>
+    </button>
+  </header>
+
+  <!-- メインコンテンツ（固定エリア） -->
+  <main class="app-main">
+
+    <!-- タイマー表示 -->
+    <div class="timer-section">
+      <div id="timer-display" class="timer-display">0:00.0</div>
+      <div class="event-row">
+        <div class="event-info">
+          <!-- idle時は種目セレクター、running/finished時は種目名表示 -->
+          <select id="event-select" class="event-select" aria-label="種目選択">
+            <option value="800">800m</option>
+            <option value="1500" selected>1500m</option>
+            <option value="5000">5000m</option>
+          </select>
+          <span id="event-label" class="event-label" hidden>1500m</span>
+        </div>
+        <div id="next-distance" class="next-distance" hidden></div>
+      </div>
+    </div>
+
+    <!-- 固定スプリット欄 -->
+    <div class="split-panel">
+      <span class="split-label">SPLIT</span>
+      <div id="split-display" class="split-display">--:--.--</div>
+    </div>
+
+    <!-- メインボタン -->
+    <div class="main-btn-wrapper">
+      <button id="btn-main" class="btn-main" aria-label="START">START</button>
+    </div>
+
+  </main>
+
+  <!-- ラップ一覧（スクロール可能） -->
+  <section class="lap-list-section" aria-label="ラップ一覧">
+    <ol id="lap-list" class="lap-list" reversed></ol>
+  </section>
+
+  <!-- RESET確認ダイアログ -->
+  <div id="dialog-overlay" class="dialog-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="dialog-message">
+    <div class="dialog-box">
+      <p id="dialog-message" class="dialog-message">計測データを削除しますか？</p>
+      <div class="dialog-buttons">
+        <button id="btn-cancel" class="btn-dialog btn-dialog-cancel">キャンセル</button>
+        <button id="btn-confirm-reset" class="btn-dialog btn-dialog-reset">リセット</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas（画像生成用・非表示） -->
+  <canvas id="share-canvas" width="1080" height="1920" style="display:none;" aria-hidden="true"></canvas>
+
+  <script src="app.js"></script>
+</body>
+</html>

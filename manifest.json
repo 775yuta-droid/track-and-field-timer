@@ -1,0 +1,15 @@
+{
+  "name": "Lap Timer",
+  "short_name": "LapTimer",
+  "description": "トラック競技用ラップ計測アプリ（800m / 1500m / 5000m）",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "start_url": "./index.html",
+  "scope": "./",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -1,0 +1,449 @@
+/* ===================================================
+   Lap Timer — style.css
+   仕様書 §9 準拠
+   =================================================== */
+
+/* ---------- リセット・ベース ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --color-bg:         #000000;
+  --color-text:       #FFFFFF;
+  --color-cumulative: #AAAAAA;
+  --color-label:      #666666;
+  --color-lap-odd:    #1A1A1A;
+  --color-lap-even:   #000000;
+  --color-accent:     #FFFFFF;
+  --color-btn-bg:     #1C1C1E;
+  --color-btn-active: #2C2C2E;
+
+  --font-mono: 'Courier New', Courier, monospace;
+  --font-sans: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Safe area (iPhone ノッチ・ホームバー対応) */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  overflow: hidden; /* ボディ自体はスクロールしない */
+  overscroll-behavior: none;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh; /* dynamic viewport height */
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---------- ヘッダー（Undo左上 / 保存右上） ---------- */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  flex-shrink: 0;
+}
+
+/* 補助ボタン共通 */
+.btn-aux {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 56px;
+  min-height: 56px;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-aux:active:not(:disabled) {
+  background: var(--color-btn-active);
+}
+
+.btn-aux:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.btn-aux-label {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: var(--color-label);
+}
+
+/* ---------- メインエリア（固定） ---------- */
+.app-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  padding: 0 16px;
+}
+
+/* ---------- タイマーセクション ---------- */
+.timer-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0 12px;
+  width: 100%;
+}
+
+.timer-display {
+  font-family: var(--font-mono);
+  font-size: clamp(64px, 18vw, 96px);
+  font-weight: bold;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-align: center;
+  /* 桁が変わっても幅が安定するよう tabular-nums */
+  font-variant-numeric: tabular-nums;
+}
+
+.event-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 28px;
+}
+
+/* idle時の種目セレクター */
+.event-select {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-label);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-label);
+  outline: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.event-select option {
+  background: #1C1C1E;
+  color: var(--color-text);
+}
+
+/* running/finished時の種目ラベル */
+.event-label {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-label);
+}
+
+/* 次距離表示 */
+.next-distance {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* ---------- 固定スプリット欄 ---------- */
+.split-panel {
+  width: calc(100% - 32px);
+  max-width: 360px;
+  background: #0D0D0D;
+  border: 1px solid #222222;
+  border-radius: 12px;
+  padding: 10px 20px 12px;
+  margin: 4px 0 16px;
+  flex-shrink: 0;
+}
+
+.split-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--color-label);
+  margin-bottom: 2px;
+}
+
+.split-display {
+  font-family: var(--font-mono);
+  font-size: clamp(48px, 13vw, 72px);
+  font-weight: bold;
+  color: var(--color-text);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- メインボタン ---------- */
+.main-btn-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 0 16px;
+  flex-shrink: 0;
+}
+
+.btn-main {
+  width: calc(100% - 32px);
+  max-width: 360px;
+  min-height: 120px;
+  background: #1C1C1E;
+  border: 2px solid #3A3A3C;
+  border-radius: 20px;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background 0.1s, transform 0.08s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+/* START状態: 緑アクセント */
+.btn-main[data-state="idle"] {
+  border-color: #1DB954;
+  color: #1DB954;
+}
+
+/* LAP状態: 白 */
+.btn-main[data-state="lap"] {
+  border-color: #3A3A3C;
+  color: var(--color-text);
+}
+
+/* LAST LAP状態: 黄色アクセント */
+.btn-main[data-state="lastlap"] {
+  border-color: #FFD60A;
+  color: #FFD60A;
+}
+
+/* RESET状態: 赤アクセント */
+.btn-main[data-state="reset"] {
+  border-color: #FF453A;
+  color: #FF453A;
+}
+
+.btn-main:active {
+  background: #2C2C2E;
+  transform: scale(0.97);
+}
+
+/* タップリップルエフェクト */
+.btn-main::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.btn-main:active::after {
+  opacity: 1;
+  transition: opacity 0s;
+}
+
+/* ---------- ラップ一覧（スクロール） ---------- */
+.lap-list-section {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.lap-list {
+  list-style: none;
+  width: 100%;
+}
+
+/* ラップ行 */
+.lap-row {
+  display: grid;
+  grid-template-columns: 80px 60px 1fr 1fr;
+  align-items: center;
+  padding: 10px 16px;
+  min-height: 48px;
+  gap: 0;
+}
+
+/* 奇偶交互背景（§9.6） */
+.lap-row:nth-child(odd)  { background-color: var(--color-lap-odd); }
+.lap-row:nth-child(even) { background-color: var(--color-lap-even); }
+
+/* Lap N ラベル */
+.lap-number {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-label);
+  font-weight: 500;
+}
+
+/* 距離ラベル */
+.lap-distance {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-label);
+  font-weight: 500;
+  text-align: right;
+  padding-right: 8px;
+}
+
+/* 区間タイム（白・主役） */
+.lap-split {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  padding-right: 12px;
+}
+
+/* 累計タイム（グレー・副役） */
+.lap-cumulative {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--color-cumulative);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ---------- RESET確認ダイアログ ---------- */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.15s ease;
+}
+
+.dialog-overlay[hidden] {
+  display: none;
+}
+
+.dialog-box {
+  background: #1C1C1E;
+  border: 1px solid #3A3A3C;
+  border-radius: 20px;
+  padding: 28px 24px 20px;
+  width: min(320px, 90vw);
+  text-align: center;
+  animation: slideUp 0.2s ease;
+}
+
+.dialog-message {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 24px;
+  line-height: 1.4;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-dialog {
+  flex: 1;
+  min-height: 48px;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-dialog:active {
+  opacity: 0.7;
+}
+
+.btn-dialog-cancel {
+  background: #2C2C2E;
+  color: var(--color-text);
+}
+
+.btn-dialog-reset {
+  background: #FF453A;
+  color: #FFFFFF;
+}
+
+/* ---------- アニメーション ---------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ラップ追加アニメーション */
+@keyframes lapIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lap-row.new {
+  animation: lapIn 0.2s ease forwards;
+}
+
+/* ---------- 縦固定補完（Safari対応） ---------- */
+@media screen and (orientation: landscape) {
+  body::before {
+    content: "縦向きでご使用ください";
+    position: fixed;
+    inset: 0;
+    background: var(--color-bg);
+    color: var(--color-label);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-family: var(--font-sans);
+    z-index: 999;
+  }
+}
