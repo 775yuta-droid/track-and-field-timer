@@ -106,7 +106,6 @@ function renderUI() {
   const isFinished = state === 'finished';
 
   // --- メインボタン ---
-  const isLastLap = isRunning && currentIndex === splits.length - 2;
   const isFinalLap = isRunning && currentIndex === splits.length - 1;
 
   let btnLabel, btnState;
@@ -116,7 +115,7 @@ function renderUI() {
   } else if (isFinished) {
     btnLabel = 'RESET';
     btnState = 'reset';
-  } else if (isLastLap) {
+  } else if (isFinalLap) {
     btnLabel = 'LAST LAP';
     btnState = 'lastlap';
   } else {
@@ -137,7 +136,7 @@ function renderUI() {
   // --- 次距離表示 (§9.4) ---
   dom.nextDistance.hidden = isIdle;
   if (isRunning) {
-    if (isLastLap || isFinalLap) {
+    if (isFinalLap) {
       dom.nextDistance.textContent = '→ FINISH';
     } else {
       dom.nextDistance.textContent = `→ ${splits[currentIndex]}m`;

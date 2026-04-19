@@ -1,9 +1,9 @@
-const CACHE_NAME = 'lap-timer-v1';
+const CACHE_NAME = 'lap-timer-v3';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
-  './app.js',
+  './app.js?v=1.3.1',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
