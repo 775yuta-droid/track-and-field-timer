@@ -28,6 +28,16 @@
       <span class="btn-aux-label">Undo</span>
     </button>
 
+    <button id="btn-info" class="btn-aux btn-info" aria-label="マニュアル">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+      <span class="btn-aux-label">ヘルプ</span>
+    </button>
+
     <button id="btn-save" class="btn-aux btn-save" aria-label="画像保存" disabled>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
         stroke-linecap="round" stroke-linejoin="round">
@@ -51,7 +61,8 @@
           <select id="event-select" class="event-select" aria-label="種目選択">
             <option value="800">800m</option>
             <option value="1500" selected>1500m</option>
-            <option value="5000">5000m</option>
+            <option value="5000">5000m (200m+400m×n)</option>
+            <option value="5000_400">5000m (400m×n+200m)</option>
           </select>
           <span id="event-label" class="event-label" hidden>1500m</span>
         </div>
@@ -90,6 +101,50 @@
 
   <!-- Canvas（画像生成用・非表示） -->
   <canvas id="share-canvas" width="1080" height="1920" style="display:none;" aria-hidden="true"></canvas>
+
+  <!-- マニュアル（モーダル） -->
+  <div id="manual-overlay" class="manual-overlay" hidden role="dialog" aria-modal="true"
+    aria-labelledby="manual-title">
+    <div class="manual-box">
+      <header class="manual-header">
+        <h2 id="manual-title">操作ガイド</h2>
+        <button id="btn-close-manual" class="btn-close-manual" aria-label="閉じる">&times;</button>
+      </header>
+      <div class="manual-content">
+        <section>
+          <h3>基本操作</h3>
+          <ul>
+            <li><strong>START</strong>: 計測を開始します。</li>
+            <li><strong>LAP</strong>: ラップタイムを記録します。</li>
+            <li><strong>LAST LAP</strong>: 最終ラップを記録し、計測を終了します。</li>
+            <li><strong>RESET</strong>: データを消去して初期状態に戻ります（確認ダイアログが出ます）。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>便利な機能</h3>
+          <ul>
+            <li><strong>Undo</strong>: 直前に記録したラップを取り消します。</li>
+            <li><strong>画像保存</strong>: 計測終了後、結果を画像として保存しSNS等で共有できます。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>5000mの計測モード</h3>
+          <p>状況に合わせて2つのモードを選べます。</p>
+          <ul>
+            <li><strong>200m+400m×n</strong>: 一般的な5000m走用。スタート直後の200mと、以降400m毎にラップを取ります。</li>
+            <li><strong>400m×n+200m</strong>: 400m毎に測り続け、最後の200mを別ラップとして計測します。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>PWAのインストール</h3>
+          <p>iPhoneのSafariで「共有ボタン」から「ホーム画面に追加」を選択すると、アプリとしてオフラインでも利用可能になります。</p>
+        </section>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js?v=1.3.1"></script>
 </body>

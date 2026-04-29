@@ -15,6 +15,14 @@ const EVENTS = {
   '800':  [400, 800],
   '1500': [300, 700, 1100, 1500],
   '5000': [200, 600, 1000, 1400, 1800, 2200, 2600, 3000, 3400, 3800, 4200, 4600, 5000],
+  '5000_400': [400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5000],
+};
+
+const EVENT_LABELS = {
+  '800':  '800m',
+  '1500': '1500m',
+  '5000': '5000m (200m+400m×n)',
+  '5000_400': '5000m (400m×n+200m)',
 };
 
 // ============================================================
@@ -67,11 +75,14 @@ const dom = {
   splitDisplay:  document.getElementById('split-display'),
   btnMain:       document.getElementById('btn-main'),
   btnUndo:       document.getElementById('btn-undo'),
+  btnInfo:       document.getElementById('btn-info'),
   btnSave:       document.getElementById('btn-save'),
   lapList:       document.getElementById('lap-list'),
   dialogOverlay: document.getElementById('dialog-overlay'),
   btnCancel:     document.getElementById('btn-cancel'),
   btnConfirm:    document.getElementById('btn-confirm-reset'),
+  manualOverlay: document.getElementById('manual-overlay'),
+  btnCloseManual:document.getElementById('btn-close-manual'),
   canvas:        document.getElementById('share-canvas'),
 };
 
@@ -138,7 +149,7 @@ function renderUI() {
   dom.eventSelect.hidden = !isIdle;
   dom.eventLabel.hidden  = isIdle;
   if (!isIdle) {
-    dom.eventLabel.textContent = `${eventType}m`;
+    dom.eventLabel.textContent = EVENT_LABELS[eventType] || `${eventType}m`;
   }
 
   // --- 次距離表示 (§9.4) ---
@@ -335,6 +346,17 @@ function handleCancelReset() {
 }
 
 // ============================================================
+// マニュアル表示
+// ============================================================
+function showManual() {
+  dom.manualOverlay.hidden = false;
+}
+
+function hideManual() {
+  dom.manualOverlay.hidden = true;
+}
+
+// ============================================================
 // メインボタンのルーティング
 // ============================================================
 function handleMainButton() {
@@ -384,7 +406,7 @@ function handleSave() {
   ctx.font = `600 52px ${FONT_SANS}`;
   ctx.fillStyle = '#666666';
   ctx.textAlign = 'left';
-  ctx.fillText(`${app.eventType}m`, PADDING_X, y);
+  ctx.fillText(EVENT_LABELS[app.eventType] || `${app.eventType}m`, PADDING_X, y);
   y += 80;
 
   // 合計タイム
@@ -469,7 +491,7 @@ function handleSave() {
 
   // PNG ダウンロード
   const link = document.createElement('a');
-  link.download = `lap-${app.eventType}m-${Date.now()}.png`;
+  link.download = `lap-${app.eventType}-${Date.now()}.png`;
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
@@ -487,6 +509,13 @@ dom.btnConfirm.addEventListener('pointerdown', handleConfirmReset);
 // ダイアログ外タップでキャンセル
 dom.dialogOverlay.addEventListener('pointerdown', (e) => {
   if (e.target === dom.dialogOverlay) handleCancelReset();
+});
+
+// マニュアル開閉
+dom.btnInfo.addEventListener('pointerdown', showManual);
+dom.btnCloseManual.addEventListener('pointerdown', hideManual);
+dom.manualOverlay.addEventListener('pointerdown', (e) => {
+  if (e.target === dom.manualOverlay) hideManual();
 });
 
 // ============================================================
