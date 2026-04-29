@@ -92,8 +92,16 @@ function stopTimerLoop() {
 
 function updateTimerDisplay() {
   if (app.state !== 'running') return;
-  const elapsed = Date.now() - app.startTime;
+  const now = Date.now();
+  const elapsed = now - app.startTime;
   dom.timerDisplay.textContent = formatTime(elapsed);
+
+  // 現在のラップタイムの更新
+  const prevCumulative = app.laps.length > 0
+    ? app.laps[app.laps.length - 1].cumulative
+    : 0;
+  const currentLapElapsed = elapsed - prevCumulative;
+  dom.splitDisplay.textContent = formatTime(currentLapElapsed);
 }
 
 // ============================================================
@@ -148,8 +156,14 @@ function renderUI() {
   // --- 固定スプリット欄 (§9.2) ---
   if (isIdle) {
     dom.splitDisplay.textContent = '--:--.--';
-  } else if (laps.length > 0) {
-    dom.splitDisplay.textContent = formatTime(laps[laps.length - 1].split);
+  } else if (isRunning) {
+    const elapsed = Date.now() - app.startTime;
+    const prevCumulative = laps.length > 0 ? laps[laps.length - 1].cumulative : 0;
+    dom.splitDisplay.textContent = formatTime(elapsed - prevCumulative);
+  } else if (isFinished) {
+    if (laps.length > 0) {
+      dom.splitDisplay.textContent = formatTime(laps[laps.length - 1].split);
+    }
   }
 
   // --- Undo ボタン ---
